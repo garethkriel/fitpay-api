@@ -36,6 +36,10 @@ fitpay = "fitpay.cli:app"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+# Vercel: the FastAPI app to deploy (the other `app` objects are the command-line tool).
+[tool.vercel]
+entrypoint = "src.fitpay.main:app"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"

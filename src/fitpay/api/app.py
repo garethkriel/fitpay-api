@@ -2,6 +2,7 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import date
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
@@ -11,6 +12,7 @@ from fitpay.api.routes import checkout, clients, health, packages, payfast_notif
 from fitpay.config import Settings, get_settings
 from fitpay.db import Database
 from fitpay.payfast import InvalidNotification
+from fitpay.seed import seed
 from fitpay.services import Conflict, NotFound
 
 
@@ -21,6 +23,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         db.create_tables()
+        if settings.demo:
+            with db.open() as session:
+                seed(session, today=date.today())
         yield
         db.engine.dispose()
 
